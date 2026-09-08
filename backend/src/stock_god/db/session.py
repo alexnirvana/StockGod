@@ -59,7 +59,8 @@ def owned_session(factory, player_id):
 
 
 def create_accounts(session, player_id):
+    from stock_god.adapters.data import PROVIDER, RULES
     for mode in ('tutorial', 'free'):
         account_id = f'{player_id}:{mode}'
-        session.add(Account(id=account_id, player_id=player_id, mode=mode))
-        session.add(Ledger(account_id=account_id, source='initial', kind='initial', cash_delta=100000, day=19))
+        session.add(Account(id=account_id, player_id=player_id, mode=mode, data_version=PROVIDER.version, rule_version=RULES['version']))
+        session.add(Ledger(account_id=account_id, source='initial', kind='initial', cash_delta=100000, day=19, rule_version=RULES['version']))

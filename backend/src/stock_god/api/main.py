@@ -21,6 +21,7 @@ from stock_god.db.models import Base, Player, Account, Order, Ledger, Position, 
 from stock_god.db.session import database, transaction, heartbeat_path, owned_session
 from stock_god.learning.service import LESSONS, course, course_detail, evaluate
 from stock_god.trading.engine import account_view, create_order, advance, cancel
+from stock_god.trading import practice
 from stock_god.adapters.data import PROVIDER, RULES
 from stock_god.api.auth import auth_router, resolve_session, digest, public_player
 from stock_god.db.models import ReviewItem, ReviewAttempt
@@ -58,7 +59,17 @@ class LanguageBody(StrictBody):
     locale: Literal['zh-CN', 'en']
 
 
-class OrderBody(StrictBody):
+class AccountIntent(StrictBody):
+    expected_account_id: str | None = Field(default=None, min_length=1, max_length=191)
+    expected_day: int | None = Field(default=None, ge=0, le=59, strict=True)
+
+
+class NewRoundBody(StrictBody):
+    expected_account_id: str = Field(min_length=1, max_length=191)
+    expected_day: int = Field(ge=0, le=59, strict=True)
+
+
+class OrderBody(AccountIntent):
     symbol: Literal["SG001", "SG002"]
     side: Literal["buy", "sell"]
     quantity: int = Field(gt=0, le=1000000, strict=True)
@@ -83,7 +94,7 @@ class ReviewBody(StrictBody):
     content_version: int = Field(ge=1, strict=True)
 
 
-class ReflectionBody(StrictBody):
+class ReflectionBody(AccountIntent):
     account_id: Literal["tutorial", "free"] = "tutorial"
     plan: str = Field(min_length=10, max_length=2000)
     review: str = Field(min_length=10, max_length=2000)
@@ -117,7 +128,7 @@ def create_app(url=None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Stock God · Teaching Simulation API", version="0.5.0", lifespan=lifespan, default_response_class=JSONResponse)
+    app = FastAPI(title="Stock God · Teaching Simulation API", version="0.6.0", lifespan=lifespan, default_response_class=JSONResponse)
     app.state.factory = factory
     origins = {x.strip().rstrip('/') for x in os.getenv('APP_ORIGINS', 'http://127.0.0.1:8080,http://localhost:8080,http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5174,http://localhost:5174,http://testserver').split(',')}
     hosts = {'api', 'testserver', '127.0.0.1', 'localhost'} | {urlparse(x).hostname for x in origins}
@@ -216,7 +227,7 @@ def create_app(url=None):
                     "courses": courses, "account": account_view(s, "tutorial"), "reviews": reviews.summary(s),
                     "rewards": [{"badge": r.badge, "xp": r.xp, "lesson_id": r.lesson_id, "created_at": iso_time(r.created_at)} for r in rewards],
                     "last_attempt": {"score": last.score, "lesson_id": last.lesson_id, "feedback": last.feedback, "created_at": iso_time(last.created_at)} if last else None,
-                    "reflections": [{"id": r.id, "plan": r.plan, "review": r.review, "account_id": r.account_id, "created_at": iso_time(r.created_at)} for r in s.scalars(select(Reflection).where(Reflection.player_id == request.state.player_id).order_by(Reflection.created_at.desc()))]}
+                    "reflections": [{"id": r.id, "plan": r.plan, "review": r.review, "account_id": r.account_id, "account_mode": account_mode, "round_number": round_number, "created_at": iso_time(r.created_at)} for r, account_mode, round_number in s.execute(select(Reflection, Account.mode, Account.round_number).join(Account, Account.id == Reflection.account_id).where(Reflection.player_id == request.state.player_id, Account.player_id == request.state.player_id).order_by(Reflection.created_at.desc(), Reflection.id))]}
 
     @app.post("/api/profile")
     def profile(request: Request, body: ProfileBody, idempotency_key: str = Header(min_length=8, max_length=128)):
@@ -272,13 +283,28 @@ def create_app(url=None):
         with owned_session(factory, request.state.player_id) as s:
             return account_view(s, mode)
 
+    @app.get('/api/practice/rounds')
+    def practice_history(request: Request, before: int | None = Query(default=None, ge=1), limit: int = Query(default=20, ge=1, le=50)):
+        with owned_session(factory, request.state.player_id) as s:
+            return practice.history(s, before, limit)
+
+    @app.get('/api/practice/rounds/{account_id}')
+    def practice_detail(request: Request, account_id: str):
+        with owned_session(factory, request.state.player_id) as s:
+            return practice.detail(s, account_id)
+
+    @app.post('/api/practice/rounds')
+    def new_practice(request: Request, body: NewRoundBody, idempotency_key: str = Header(min_length=8, max_length=128)):
+        return mutate(request.state.player_id, 'practice:round', idempotency_key, body.model_dump(), lambda s: practice.start_round(s, body))
+
     @app.get("/api/accounts/{mode}/bars/{symbol}")
     def bars(request: Request, mode: str, symbol: str):
-        from stock_god.trading.engine import get_account
+        from stock_god.trading.engine import get_account, require_versions
         if symbol not in PROVIDER.names:
             raise HTTPException(404, "没有这只教学股票。")
         with owned_session(factory, request.state.player_id) as s:
             a = get_account(s, mode)
+            require_versions(a)
             return PROVIDER.visible(symbol, a.day)
 
     @app.post("/api/accounts/{mode}/orders")
@@ -290,14 +316,16 @@ def create_app(url=None):
         return mutate(request.state.player_id, "cancel:" + mode + ":" + order_id, idempotency_key, {}, lambda s: cancel(s, mode, order_id))
 
     @app.post("/api/accounts/{mode}/advance")
-    def advance_day(request: Request, mode: str, idempotency_key: str = Header(min_length=8, max_length=128)):
-        return mutate(request.state.player_id, "advance:" + mode, idempotency_key, {}, lambda s: advance(s, mode))
+    def advance_day(request: Request, mode: str, body: AccountIntent, idempotency_key: str = Header(min_length=8, max_length=128)):
+        return mutate(request.state.player_id, "advance:" + mode, idempotency_key, body.model_dump(), lambda s: advance(s, mode, body.expected_account_id, body.expected_day))
 
     @app.post("/api/reflections")
     def reflect(request: Request, body: ReflectionBody, idempotency_key: str = Header(min_length=8, max_length=128)):
         def save(s):
-            from stock_god.trading.engine import get_account
-            r = Reflection(id=str(uuid4()), player_id=request.state.player_id, plan=body.plan, review=body.review, account_id=get_account(s, body.account_id).id)
+            from stock_god.trading.engine import get_account, require_context
+            account = get_account(s, body.account_id)
+            require_context(account, body.expected_account_id, body.expected_day)
+            r = Reflection(id=str(uuid4()), player_id=request.state.player_id, plan=body.plan, review=body.review, account_id=account.id)
             s.add(r)
             return {"id": r.id, "message": "计划和复盘已保存到学习档案。"}
         return mutate(request.state.player_id, "reflection", idempotency_key, body.model_dump(), save)

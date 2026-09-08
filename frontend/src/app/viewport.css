@@ -59,6 +59,31 @@ html[lang=en] .objective-copy h3 { font-size: 16px; }
 .comparison .report-notes { margin-top: 12px; }
 @media (max-width: 600px) { .comparison-picker { grid-template-columns: 1fr; } }
 .lesson-audio { margin-bottom: 18px; }
+.practice-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.practice-actions .button { flex: 1; min-width: 0; padding: 8px; font-size: 11px; }
+.practice-actions .button:last-child { flex-basis: 100%; }
+.round-confirm p { font-size: 13px; line-height: 1.8; }
+.round-summary { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px; background: #12223a; border-radius: 10px; font-size: 13px; }
+.round-buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.round-history article { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid #263a55; }
+.round-history article>div { min-width: 0; }
+.round-history article p { color: #b2c1d7; font-size: 12px; margin: 7px 0; }
+.round-history article small { color: #8c9cbb; font-size: 10px; overflow-wrap: anywhere; }
+.round-history .data-pill { margin-left: 10px; }
+.round-report .report-stats { margin: 14px 0; }
+.round-report h3 { margin: 18px 0 6px; }
+.round-reflections { margin-top: 16px; padding: 12px; border: 1px solid #263a55; border-radius: 10px; }
+.round-reflections summary { cursor: pointer; font-size: 13px; }
+.round-reflections article { padding: 14px 0; border-bottom: 1px solid #263a55; }
+.round-reflections article:last-child { border-bottom: 0; padding-bottom: 0; }
+.round-reflections small { color: #8c9cbb; font-size: 11px; }
+.round-reflections p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.7; }
+.round-versions { font-size: 10px; color: #8c9cbb; overflow-wrap: anywhere; }
+@media (max-width: 500px) {
+  .round-buttons .button { width: 100%; }
+  .round-report .report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .round-history article { align-items: flex-start; }
+}
 .narration-language { display: flex; align-items: center; justify-content: flex-end; gap: 8px; color: #a3b5d0; font-size: 12px; margin-bottom: 8px; }
 .narration-player { padding: 13px 15px; border: 1px solid #354969; border-radius: 12px; background: linear-gradient(110deg, #162640, #111d33); color: #e7edfa; }
 .narration-player audio { display: none; }

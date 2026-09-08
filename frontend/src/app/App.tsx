@@ -78,7 +78,7 @@ export default function App() {
       <NavLink className="brand" to="/" aria-label={t("我是股神，回到学习主页")}><img src="/favicon.svg" alt=""/><span><strong>{t("我是股神")}</strong><small>Stock God</small></span></NavLink>
       <nav aria-label={t("主导航")}>{links.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}><Icon size={22}/><span>{label}</span><ChevronRight className="nav-arrow" size={15}/></NavLink>)}</nav>
       <div className="sidebar-art" aria-hidden="true"><div><p>{t("投资认知进化")}<br />{t("从这里开始")}</p><small>A BETTER INVESTOR</small></div></div>
-      <div className="sidebar-footer"><span className="status-dot"/>{t("现在学习 · 更好的自己")}<small>{t("个人学习空间 · v0.5")}</small></div>
+      <div className="sidebar-footer"><span className="status-dot"/>{t("现在学习 · 更好的自己")}<small>{t("个人学习空间 · v0.6")}</small></div>
     </aside>
     <div className="workspace">
       <header className="topbar"><LanguageSwitcher authenticated={!!state} />

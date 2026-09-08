@@ -22,7 +22,7 @@ def claim_legacy(factory, username):
             raise ValueError('Register your own account first, then provide its username.')
         accounts = session.scalars(select(Account).where(Account.player_id == target.id)).all()
         ids = [a.id for a in accounts]
-        if target.xp or any(a.day != 19 or a.cash != 100000 or a.frozen_cash for a in accounts):
+        if target.xp or len(accounts) != 2 or any(a.round_number != 1 or a.archived_at or a.day != 19 or a.cash != 100000 or a.frozen_cash for a in accounts):
             raise ValueError('Target has activity; no records changed. Use an unused account.')
         for model in (Progress, Attempt, Reward, Reflection, ReviewItem, ReviewAttempt, ListeningProgress, Job):
             if session.scalar(select(model).where(model.player_id == target.id).limit(1)):

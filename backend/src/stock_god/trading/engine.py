@@ -23,10 +23,22 @@ def fee(amount, side):
 
 
 def get_account(session, mode):
-    account = session.scalar(select(Account).where(Account.player_id == owner(session), Account.mode == mode))
+    account = session.scalar(select(Account).where(Account.player_id == owner(session), Account.mode == mode, Account.archived_at.is_(None)))
     if account is None or mode not in ("tutorial", "free"):
         raise HTTPException(404, "没有这个模拟账户。请选择教学沙盒或自由模拟。")
     return account
+
+
+def require_context(account, expected_account_id=None, expected_day=None):
+    # Old tabs must not apply their intentions to a replacement account or later day.
+    if account.mode == 'free' or expected_account_id is not None or expected_day is not None:
+        if expected_account_id != account.id or expected_day != account.day:
+            raise HTTPException(409, '练习轮次或教学日已变化，请刷新账户后重新确认操作。')
+
+
+def require_versions(account):
+    if account.data_version != PROVIDER.version or account.rule_version != RULES['version']:
+        raise HTTPException(503, '该轮次使用的数据或规则版本暂不可用，原始记录已保留。')
 
 
 def position(session, account_id, symbol):
@@ -42,11 +54,19 @@ def order_view(o):
 
 def account_view(session, mode):
     a = get_account(session, mode)
+    return account_detail(session, a)
+
+
+def account_detail(session, a):
+    require_versions(a)
     positions = session.scalars(select(Position).where(Position.account_id == a.id, Position.quantity > 0)).all()
     value = sum((PROVIDER.bar(p.symbol, a.day)["close"] * p.quantity for p in positions), ZERO)
-    return {"id": a.id, "mode": a.mode, "day": a.day, "cash": str(money(a.cash)), "frozen_cash": str(money(a.frozen_cash)),
+    return {"id": a.id, "mode": a.mode, "round_number": a.round_number,
+            "created_at": iso_time(a.created_at) if a.created_at else None,
+            "archived_at": iso_time(a.archived_at) if a.archived_at else None,
+            "day": a.day, "cash": str(money(a.cash)), "frozen_cash": str(money(a.frozen_cash)),
             "available_cash": str(money(a.cash - a.frozen_cash)), "position_value": str(money(value)), "total_assets": str(money(a.cash + value)),
-            "rule_version": a.rule_version, "data_label": "教学示例", "data_version": PROVIDER.version,
+            "rule_version": a.rule_version, "data_label": "教学示例", "data_version": a.data_version,
             "positions": [{"symbol": p.symbol, "name": PROVIDER.names[p.symbol], "quantity": p.quantity,
                            "sellable": p.sellable - p.frozen, "frozen": p.frozen, "cost": str(money(p.cost)),
                            "price": str(PROVIDER.bar(p.symbol, a.day)["close"])} for p in positions],
@@ -60,6 +80,8 @@ def account_view(session, mode):
 
 def create_order(session, mode, body):
     a = get_account(session, mode)
+    require_context(a, body.expected_account_id, body.expected_day)
+    require_versions(a)
     if a.day >= PROVIDER.last_day:
         raise HTTPException(409, "教学场景已结束，不能提交新订单。可查看记录或使用另一个练习账户。")
     bar = PROVIDER.bar(body.symbol, a.day)
@@ -112,8 +134,10 @@ def cancel(session, mode, order_id):
     return order_view(o)
 
 
-def advance(session, mode):
+def advance(session, mode, expected_account_id=None, expected_day=None):
     a = get_account(session, mode)
+    require_context(a, expected_account_id, expected_day)
+    require_versions(a)
     if a.day >= PROVIDER.last_day:
         raise HTTPException(409, "已到教学数据末尾，无法继续推进；你的账户和练习记录已保留。")
     next_day = a.day + 1

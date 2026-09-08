@@ -762,5 +762,9 @@
   "当前账号已切换，请重新打开讲解后继续收听。": "The signed-in account changed. Reopen the explanation before continuing.",
   "讲解音频已更新，请重新打开后继续收听。": "The narration has been updated. Reopen the explanation to continue.",
   "收听位置超过音频时长。": "The listening position exceeds the audio duration.",
-  "另一个窗口已更新收听位置，请重新打开讲解后继续保存。": "Another window updated this listening position. Reopen the explanation before saving again."
+  "另一个窗口已更新收听位置，请重新打开讲解后继续保存。": "Another window updated this listening position. Reopen the explanation before saving again.",
+  "练习轮次或教学日已变化，请刷新账户后重新确认操作。": "The practice round or teaching day has changed. Refresh the account and review your action again.",
+  "该轮次使用的数据或规则版本暂不可用，原始记录已保留。": "The data or rules version used by this round is unavailable. Its original records are preserved.",
+  "请先撤销或处理本轮待处理订单，再开始新一轮练习。": "Cancel or settle this round’s pending orders before starting a new round.",
+  "没有找到这个练习轮次。": "This practice round was not found."
 }

@@ -41,3 +41,12 @@ def test_claim_refuses_to_overwrite_an_active_registered_account(client):
         module.claim_legacy(client.app.state.factory, 'testlearner')
     assert len(client.get('/api/accounts/tutorial').json()['orders']) == 1
     assert client.get('/api/state').json()['player']['xp'] == 0
+
+
+def test_claim_preserves_even_empty_archived_practice_rounds(client):
+    legacy(client.app.state.factory)
+    current = client.get('/api/accounts/free').json()
+    assert post(client, '/practice/rounds', {'expected_account_id': current['id'], 'expected_day': current['day']}).status_code == 200
+    with pytest.raises(ValueError, match='activity'):
+        module.claim_legacy(client.app.state.factory, 'testlearner')
+    assert len(client.get('/api/practice/rounds').json()['items']) == 2

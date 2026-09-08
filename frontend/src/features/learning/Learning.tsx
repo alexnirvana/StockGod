@@ -5,7 +5,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Markdown from 'react-markdown';
 import { BookOpen, Check, ChevronRight, Flag, Lightbulb, LockKeyhole, MessageSquareText, Target, Trophy } from 'lucide-react';
-import type { AnswerResult, Course, State } from '../../lib/types';
+import type { AccountContext, AnswerResult, Course, State } from '../../lib/types';
 import { api, useAction } from '../../lib/api';
 import { Button } from '../../components/ui/button';
 import { Panel, ErrorNote, Loading, PageHeader, Coach } from '../../components/shared';
@@ -65,16 +65,18 @@ function Quiz({ course }: {
     <div className="quiz-navigation">{!action.data ? <><span className="muted tiny">{t("第 {{current}} / {{total}} 题", { current: questionIndex + 1, total: course.questions!.length })}</span>{questionIndex > 0 && <Button type="button" variant="secondary" disabled={action.isPending} onClick={() => setQuestionIndex(i => i - 1)}>{t("上一题")}</Button>}<Button disabled={action.isPending || answers[questionIndex] < 0}>{action.isPending ? t("正在检查…") : questionIndex === course.questions!.length - 1 ? t("提交答案") : t("下一题")}<ChevronRight size={16}/></Button></> : <Button type="button" variant="secondary" onClick={() => { action.reset(); setQuestionIndex(0); }}>{t("重新练习")}</Button>}</div>
   </form>;
 }
-export function ReflectionForm() {
+export function ReflectionForm({ mode = 'tutorial', context }: { mode?: 'tutorial' | 'free'; context?: AccountContext }) {
     useLocale();
     const [plan, setPlan] = useState('');
     const [review, setReview] = useState('');
     const action = useAction<{
         message: string;
     }, {
+        expected_account_id?: string;
+        expected_day?: number;
         account_id: string;
         plan: string;
         review: string;
     }>('/reflections');
-    return <form className="reflection-form" onSubmit={e => { e.preventDefault(); action.mutate({ account_id: 'tutorial', plan, review }); }}><span className="eyebrow">REFLECT & GROW</span><h2>{t("把一次练习，变成自己的经验")}</h2><label className="field">{t("交易前计划")}<textarea minLength={10} maxLength={2000} value={plan} onChange={e => setPlan(e.target.value)} placeholder={t("这次练习想验证什么？打算使用多少仓位？（至少 10 个字）")} required/></label><label className="field">{t("交易后复盘")}<textarea minLength={10} maxLength={2000} value={review} onChange={e => setReview(e.target.value)} placeholder={t("订单发生了什么？费用是否符合预期？下次会怎样改进？")} required/></label><ErrorNote error={action.error}/>{action.data && <p className="success-note" role="status">{action.data.message}</p>}<Button disabled={action.isPending || plan.trim().length < 10 || review.trim().length < 10}>{t("保存计划与复盘")}<Check size={17}/></Button></form>;
+    return <form className="reflection-form" onSubmit={e => { e.preventDefault(); action.mutate({ account_id: mode, ...context, plan, review }); }}><span className="eyebrow">REFLECT & GROW</span><h2>{t("把一次练习，变成自己的经验")}</h2><label className="field">{t("交易前计划")}<textarea minLength={10} maxLength={2000} value={plan} onChange={e => setPlan(e.target.value)} placeholder={t("这次练习想验证什么？打算使用多少仓位？（至少 10 个字）")} required/></label><label className="field">{t("交易后复盘")}<textarea minLength={10} maxLength={2000} value={review} onChange={e => setReview(e.target.value)} placeholder={t("订单发生了什么？费用是否符合预期？下次会怎样改进？")} required/></label><ErrorNote error={action.error}/>{action.data && <p className="success-note" role="status">{action.data.message}</p>}<Button disabled={action.isPending || plan.trim().length < 10 || review.trim().length < 10}>{t("保存计划与复盘")}<Check size={17}/></Button></form>;
 }

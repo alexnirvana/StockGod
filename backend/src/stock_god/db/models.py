@@ -67,10 +67,17 @@ class AuthThrottle(Base):
 
 class Account(Base):
     __tablename__ = "accounts"
-    __table_args__ = (UniqueConstraint("player_id", "mode", name="uq_accounts_player_mode"),)
+    __table_args__ = (
+        UniqueConstraint("player_id", "mode", "round_number", name="uq_accounts_player_mode_round"),
+        Index("ix_accounts_player_active", "player_id", "mode", "archived_at"),
+    )
     id: Mapped[str] = mapped_column(String(191), primary_key=True)
     player_id: Mapped[str] = mapped_column(String(191))
     mode: Mapped[str] = mapped_column(String(191))
+    round_number: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime | None] = mapped_column(REVIEW_TIME, default=now, nullable=True)
+    archived_at: Mapped[datetime | None] = mapped_column(REVIEW_TIME, nullable=True)
+    data_version: Mapped[str] = mapped_column(String(191), default="teaching-v1-76958d6814cd")
     cash: Mapped[Decimal] = mapped_column(Numeric(18, 2), default=Decimal("100000"))
     frozen_cash: Mapped[Decimal] = mapped_column(Numeric(18, 2), default=Decimal("0"))
     day: Mapped[int] = mapped_column(Integer, default=19)

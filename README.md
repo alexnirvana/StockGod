@@ -10,7 +10,7 @@ A self-hosted learning app for stock-market fundamentals and introductory quanti
 Lessons, simulated trades, and spaced reviews — all in your browser.
 
 <p>
-  <img alt="Version 0.5.0" src="https://img.shields.io/badge/version-0.5.0-6366f1?style=flat-square">
+  <img alt="Version 0.6.0" src="https://img.shields.io/badge/version-0.6.0-6366f1?style=flat-square">
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61dafb?style=flat-square">
   <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square">
   <img alt="MySQL 8.4" src="https://img.shields.io/badge/MySQL-8.4-4479a1?style=flat-square">
@@ -40,6 +40,13 @@ Lessons, simulated trades, and spaced reviews — all in your browser.
 
 </details>
 
+<details>
+<summary><strong>Practice round preview</strong></summary>
+
+![Practice round preview](.github/assets/practice-rounds-en.png)
+
+</details>
+
 ## Why Stock God?
 
 Learning to trade involves more than watching a price chart. Stock God connects each concept to a small, explainable practice task:
@@ -59,16 +66,20 @@ You can follow a five-chapter path, inspect what happened to an order, and retur
 | **Spoken explanations** | Listen to all five lessons and preset coach answers in English or Simplified Chinese. Pause, change speed, jump between sections, and resume from a saved position. Thirty MP3 tracks are bundled; no speech API key is required. |
 | **Knowledge reviews** | Practice 10 knowledge points through 20 alternative cases. Mistakes enter your personal queue; successful reviews schedule follow-ups after 1, 3, and 7 days. |
 | **Simulated trading** | Use separate tutorial and free-practice accounts, each starting with 100,000 virtual CNY. Place limit orders, cancel pending orders, inspect fees, positions, and the cash ledger. |
+| **Repeatable practice** | Start another round without overwriting earlier results. Review each round in a compact dialog and save its own reflections. |
 | **Strategy experiments** | Run a moving-average strategy on a fixed 60-day teaching dataset. Inspect equity, a benchmark, drawdown, fees, and versioned parameters. Compare two or three completed runs over a common period. |
 | **A compact workspace** | Keep charts and tasks visible on desktop. Open lessons, quizzes, trade records, and reviews in dialogs. Smaller screens scroll within the content area. |
 | **Records you can inspect** | Save plans and reflections, export your own business records, and check database, worker, and data availability. |
 
-### New in 0.5
+### New in 0.6
 
-- Course explanations and preset coach answers now include built-in synthesized audio in both languages.
-- Playback includes pause/resume, restart, a seek bar, section navigation, and speeds from 0.75× to 2×. Audio starts only when you press play.
-- Listening positions and speed are saved separately for each account, course, and language. Open **Learning Profile → My listening history** to continue.
-- Closing an explanation stops its audio. Listening does not grant XP or bypass independent practice.
+- Start a fresh free-practice round with its own virtual funds and account ledger.
+- Archive earlier rounds and revisit their orders, positions, cash movements, and reflections.
+- Keep pending orders explicit: cancel or settle them before starting again. Existing holdings stay in the archived round.
+- Save reflections to the current practice round. Old tabs cannot submit actions into a replacement round.
+- Existing accounts migrate to round one with their records preserved. Bilingual lesson audio and listening bookmarks remain available.
+
+See [practice rounds](guides/PRACTICE_ROUNDS.md) for the workflow, persistence rules, and upgrade details.
 
 ## Quick start
 
@@ -188,7 +199,7 @@ npm --prefix frontend test
 npm --prefix frontend run build
 ```
 
-The test suite covers authentication, user isolation, order accounting, idempotency, recovery, review scheduling, language isolation, experiment comparison, audio access, listening bookmarks, and legacy migrations. MySQL tests require a dedicated `stockgod_tests` database. Browser scripts are in [tests/e2e](tests/e2e); setup and isolated test commands are in the [operations guide](guides/OPERATIONS.md).
+The test suite covers authentication, user isolation, order accounting, idempotency, recovery, review scheduling, language isolation, experiment comparison, audio access, listening bookmarks, practice rounds, concurrent archive/order operations, and legacy migrations. MySQL tests require a dedicated `stockgod_tests` database. Browser scripts are in [tests/e2e](tests/e2e); setup and isolated test commands are in the [operations guide](guides/OPERATIONS.md).
 
 ### Translation contributions
 
@@ -226,6 +237,7 @@ StockGod/
 - [ ] Optional AI explanations and introductory model-research courses
 - [x] English and Simplified Chinese interface and course content
 - [x] Built-in bilingual narration and personal listening bookmarks
+- [x] Independent practice rounds with preserved records and stale-tab protection
 
 Real market feeds, historical challenges, forward simulation, open-ended AI coaching, LightGBM training, email verification, and self-service password recovery are **not implemented**. The included coach provides preset teaching explanations.
 
