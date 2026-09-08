@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stock-god"
+version = "0.3.0"
+description = "Local learning-first simulated trading application"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.121.1", "uvicorn==0.38.0", "pydantic==2.12.4",
+  "SQLAlchemy==2.0.44", "alembic==1.17.1", "psycopg[binary]==3.2.12", "PyMySQL[rsa]==1.1.2", "pwdlib[argon2]==0.3.0",
+  "APScheduler==3.11.1", "duckdb==1.4.1", "pyarrow==22.0.0"
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.4.2", "httpx==0.28.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"stock_god._vendor.vnpy_event" = ["LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["../tests/unit", "../tests/integration"]

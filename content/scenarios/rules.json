@@ -1,0 +1,25 @@
+{
+  "version": "cn-mainboard-teaching-v1",
+  "scope": "虚构股票教学参数，参考沪深主板普通股票；不覆盖所有品种或历史规则",
+  "effective_date": "2026-09-08",
+  "buy_lot": 100,
+  "price_tick": "0.01",
+  "price_limit": "0.10",
+  "commission_rate": "0.0003",
+  "minimum_commission": "5.00",
+  "transfer_rate": "0.00001",
+  "stamp_rate": "0.0005",
+  "slippage": "0.00",
+  "matching": "next-open-limit-v1",
+  "commission_note": "佣金及最低费用为教学假设，不代表任何券商报价。零滑点、整单成交、下一开盘估算，未成交即到期。",
+  "sources": [
+    {
+      "title": "上海证券交易所交易机制",
+      "url": "https://english.sse.com.cn/start/trading/mechanism/"
+    },
+    {
+      "title": "财政部 税务总局 2023年第39号公告",
+      "url": "https://www.mof.gov.cn/jrttts/202308/t20230828_3904235.htm"
+    }
+  ]
+}

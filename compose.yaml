@@ -1,0 +1,65 @@
+name: stockgod
+services:
+  mysql:
+    image: mysql:8.4.6
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_as_cs", "--default-time-zone=+00:00"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-stockgod_root_local_only}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-stockgod}
+      MYSQL_USER: ${MYSQL_USER:-stockgod}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-stockgod_local_only}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u $$MYSQL_USER -D $$MYSQL_DATABASE -e 'SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["sh", "-c", "python -m alembic -c backend/alembic.ini upgrade head && python -m uvicorn stock_god.api.main:app --host 0.0.0.0 --port 8000"]
+    environment: &backend-env
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-stockgod}:${MYSQL_PASSWORD:-stockgod_local_only}@mysql:3306/${MYSQL_DATABASE:-stockgod}?charset=utf8mb4
+      APP_ORIGINS: ${APP_ORIGINS:-http://127.0.0.1:8080,http://localhost:8080}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: 'true'
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["python", "-m", "stock_god.jobs.worker"]
+    environment: *backend-env
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  mysql-data:
+  postgres-data:
+
