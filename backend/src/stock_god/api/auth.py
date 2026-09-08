@@ -4,6 +4,7 @@ import re
 import secrets
 from datetime import timedelta, timezone
 from uuid import uuid4
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -32,6 +33,7 @@ class Credentials(BaseModel):
     model_config = ConfigDict(extra='forbid')
     username: str = Field(min_length=3, max_length=32)
     password: str = Field(min_length=10, max_length=128)
+    locale: Literal['zh-CN', 'en'] = 'zh-CN'
 
     @field_validator('username')
     @classmethod
@@ -44,7 +46,7 @@ class Credentials(BaseModel):
 
 def public_player(player):
     return {'id': player.id, 'username': player.username, 'name': player.name,
-            'guide_step': player.guide_step, 'guide_status': player.guide_status}
+            'guide_step': player.guide_step, 'guide_status': player.guide_status, 'locale': player.locale}
 
 
 def throttle(factory, request, action, username):
@@ -111,7 +113,7 @@ def auth_router(factory):
         try:
             with transaction(factory) as s:
                 player = Player(id=str(uuid4()), username=body.username, password_hash=password_hash,
-                                name=body.username[:24], onboarded=True, guide_step=0, guide_status='pending')
+                                name=body.username[:24], onboarded=True, guide_step=0, guide_status='pending', locale=body.locale)
                 s.add(player)
                 s.flush()
                 create_accounts(s, player.id)

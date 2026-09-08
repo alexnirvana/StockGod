@@ -7,7 +7,7 @@ import argparse
 from sqlalchemy import delete, select
 from stock_god.db.models import Account, AuthSession, Attempt, Job, Ledger, Order, Player, Position, Progress, Reflection, RequestRecord, Reward
 from stock_god.db.session import database, transaction
-from stock_god.db.models import ReviewItem, ReviewAttempt
+from stock_god.db.models import ReviewItem, ReviewAttempt, ListeningProgress
 
 
 def claim_legacy(factory, username):
@@ -24,7 +24,7 @@ def claim_legacy(factory, username):
         ids = [a.id for a in accounts]
         if target.xp or any(a.day != 19 or a.cash != 100000 or a.frozen_cash for a in accounts):
             raise ValueError('Target has activity; no records changed. Use an unused account.')
-        for model in (Progress, Attempt, Reward, Reflection, ReviewItem, ReviewAttempt, Job):
+        for model in (Progress, Attempt, Reward, Reflection, ReviewItem, ReviewAttempt, ListeningProgress, Job):
             if session.scalar(select(model).where(model.player_id == target.id).limit(1)):
                 raise ValueError('Target has learning activity; no records changed.')
         for model in (Order, Position):
@@ -37,6 +37,7 @@ def claim_legacy(factory, username):
         session.flush()
         legacy.username, legacy.password_hash = username, password_hash
         legacy.reduced_motion = target.reduced_motion
+        legacy.locale = target.locale
         legacy.guide_step, legacy.guide_status = 0, 'pending'
         for model in (AuthSession, RequestRecord):
             session.execute(delete(model).where(model.player_id == target.id))

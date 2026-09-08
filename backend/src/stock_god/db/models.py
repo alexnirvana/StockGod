@@ -29,6 +29,7 @@ class Player(Base):
     password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     guide_step: Mapped[int] = mapped_column(Integer, default=0)
     guide_status: Mapped[str] = mapped_column(String(16), default="pending")
+    locale: Mapped[str] = mapped_column(String(16), default="zh-CN")
     name: Mapped[str] = mapped_column(String(30), default="投资小白")
     onboarded: Mapped[bool] = mapped_column(Boolean, default=False)
     reduced_motion: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -42,6 +43,19 @@ class AuthSession(Base):
     csrf_hash: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
+class ListeningProgress(Base):
+    __tablename__ = 'listening_progress'
+    id: Mapped[str] = mapped_column(String(191), primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(191), index=True)
+    lesson_id: Mapped[str] = mapped_column(String(191))
+    locale: Mapped[str] = mapped_column(String(16))
+    audio_version: Mapped[str] = mapped_column(String(64))
+    position_ms: Mapped[int] = mapped_column(Integer, default=0)
+    playback_rate: Mapped[Decimal] = mapped_column(Numeric(3, 2), default=Decimal('1'))
+    revision: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(REVIEW_TIME, default=now)
 
 
 class AuthThrottle(Base):

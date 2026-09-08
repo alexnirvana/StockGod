@@ -14,6 +14,7 @@ Direct dependencies are pinned in `frontend/package.json` and `backend/pyproject
 | Motion | 12.23.24 | MIT |
 | ECharts | 6.1.0 | Apache-2.0 |
 | Lucide React | 0.552.0 | ISC |
+| i18next / react-i18next | 26.4.2 / 17.0.13 | MIT |
 | React Markdown | 10.1.0 | MIT |
 | FastAPI | 0.121.1 | MIT |
 | Pydantic | 2.12.4 | MIT |
@@ -34,3 +35,5 @@ The custom Button and Dialog primitives compose Radix and class-variance-authori
 Package metadata and bundled license files were inspected during implementation. Preserve applicable licenses and notices when redistributing dependencies; psycopg carries LGPL obligations. Database/server/container images have their own distributions and license notices (MySQL Community Server GPL-2.0 distribution, legacy PostgreSQL license, Nginx BSD-style license, and base-image package licenses). No market-data redistribution rights are implied by software licenses.
 
 User-provided artwork remains user-provided content. The two-page UI concept board was generated using the built-in imagegen tool for this project and is stored locally under `docs/concepts/`.
+
+Bundled narration under `content/narration/` was synthesized from the project’s lesson text and preset coach explanations with Windows System.Speech (Microsoft Huihui Desktop and Microsoft Zira Desktop), then encoded as MP3 with FFmpeg/libmp3lame. The manifest records voice names, text versions, durations, and file hashes. These are synthesized recordings, not human voice recordings. Windows speech engines and FFmpeg are build tools and are not redistributed in the runtime images. The application serves the generated MP3 files using standard browser audio playback.

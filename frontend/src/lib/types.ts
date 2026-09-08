@@ -1,11 +1,12 @@
+import type { Narration } from '../features/audio/NarrationPlayer'
 export type Bar = { day: number; open: string; close: string; high: string; low: string; volume: number; suspended: boolean }
 export type Quote = { symbol: string; name: string; price: string; change: string; volume: number; suspended: boolean }
 export type Order = { id: string; symbol: string; name: string; side: 'buy' | 'sell'; quantity: number; limit_price: string; status: 'pending' | 'filled' | 'cancelled' | 'expired'; reason: string; created_day: number; filled_day: number | null; fill_price: string | null; fees: string; created_at: string }
 export type Account = { id: string; mode: string; day: number; cash: string; frozen_cash: string; available_cash: string; position_value: string; total_assets: string; rule_version: string; data_label: string; data_version: string; positions: { symbol: string; name: string; quantity: number; sellable: number; frozen: number; cost: string; price: string }[]; orders: Order[]; bars: Bar[]; quotes: Quote[]; ledger: { id: number; kind: string; cash_delta: string; quantity_delta: number; symbol: string | null; day: number; source: string }[] }
-export type Course = { id: string; title: string; short_title: string; xp: number; badge: string; goal: string; minutes: number; prerequisites: string[]; practice: string; version: number; locked: boolean; completed: boolean; review_due: boolean; attempts: number; last_score: number; body?: string; questions?: { prompt: string; options: string[] }[] }
+export type Course = { narration?: Narration | null; id: string; title: string; short_title: string; xp: number; badge: string; goal: string; minutes: number; prerequisites: string[]; practice: string; version: number; locked: boolean; completed: boolean; review_due: boolean; attempts: number; last_score: number; body?: string; questions?: { prompt: string; options: string[] }[] }
 export type Feedback = { passed: boolean; explanation: string }
 export type AnswerResult = { passed: boolean; score: number; feedback: Feedback[]; requirements: string[]; xp_awarded: number; message: string; lesson_id: string }
-export type AuthUser = { id: string; username: string; name: string; guide_step: number; guide_status: 'pending' | 'completed' | 'skipped' }
+export type AuthUser = { locale: 'zh-CN' | 'en'; id: string; username: string; name: string; guide_step: number; guide_status: 'pending' | 'completed' | 'skipped' }
 export type ReviewSummary = { due: number; scheduled: number; mastered: number; next_due_at: string | null }
 export type ReviewItem = { id: string; lesson_id: string; title: string; stage: number; mistakes: number; review_count: number; due: boolean; due_at: string | null; revision: number; variant: number; content_version: number; question: { prompt: string; options: string[] } }
 export type ReviewQueue = { summary: ReviewSummary; items: ReviewItem[] }

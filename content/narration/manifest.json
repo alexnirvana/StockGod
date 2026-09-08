@@ -1,0 +1,630 @@
+{
+  "format": 1,
+  "engine": "Windows System.Speech",
+  "tracks": [
+    {
+      "id": "lesson-account",
+      "course_id": "account",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "384fe3735ed54fc6c1ad",
+      "file": "lesson-account-zh-CN-384fe3735ed54fc6c1ad.mp3",
+      "duration_ms": 69235,
+      "sha256": "8f96dcb79e0c9cab68ed6e164d50e893cfb22c8b094206debe1ee05510a06586",
+      "sections": [
+        {
+          "title": "认识你的模拟账户",
+          "start_ms": 0
+        },
+        {
+          "title": "先看一个例子",
+          "start_ms": 2804
+        },
+        {
+          "title": "四个位置，各司其职",
+          "start_ms": 21022
+        },
+        {
+          "title": "动手找一找",
+          "start_ms": 47488
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-account",
+      "course_id": "account",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "aab6f38e9256158483e7",
+      "file": "coach-lesson-account-zh-CN-aab6f38e9256158483e7.mp3",
+      "duration_ms": 15245,
+      "sha256": "90b8bae50c98d983f9a180ebee7b16fcd0b78cba085fa9e7655e17b998130431",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-orders",
+      "course_id": "orders",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "56c1e7b62937a44232f1",
+      "file": "lesson-orders-zh-CN-56c1e7b62937a44232f1.mp3",
+      "duration_ms": 72407,
+      "sha256": "5ff0dbe9bf1f016821355995956f2f07870b16b6dfb9bb1f03b89329a43ed269",
+      "sections": [
+        {
+          "title": "提交订单，不等于完成成交",
+          "start_ms": 0
+        },
+        {
+          "title": "一个直观例子",
+          "start_ms": 4088
+        },
+        {
+          "title": "本场景如何处理",
+          "start_ms": 20981
+        },
+        {
+          "title": "先操作，再判断",
+          "start_ms": 48056
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-orders",
+      "course_id": "orders",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "e0a9c45b19ce085f84a0",
+      "file": "coach-lesson-orders-zh-CN-e0a9c45b19ce085f84a0.mp3",
+      "duration_ms": 19348,
+      "sha256": "c65c3c0dc0c20ae7bdc2572130036585a952d9099e522519d5c2735f26d16390",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-market",
+      "course_id": "market",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "aed8ad91d29eb3a2c8a4",
+      "file": "lesson-market-zh-CN-aed8ad91d29eb3a2c8a4.mp3",
+      "duration_ms": 63716,
+      "sha256": "5819f644b0c76d38b37c71d6c1352ed3e4e7aeb57395d0ed2d6b62d5e8422b15",
+      "sections": [
+        {
+          "title": "一张行情卡告诉了你什么",
+          "start_ms": 0
+        },
+        {
+          "title": "先读数，再解释",
+          "start_ms": 3593
+        },
+        {
+          "title": "看懂一根 K 线",
+          "start_ms": 19353
+        },
+        {
+          "title": "比较时保持一致",
+          "start_ms": 36726
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-market",
+      "course_id": "market",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "5d3a0ea78cd18043d1eb",
+      "file": "coach-lesson-market-zh-CN-5d3a0ea78cd18043d1eb.mp3",
+      "duration_ms": 15274,
+      "sha256": "9532ce7429ad21222f627e2187b48c11555045ef485f583e7ba1efce7bfc1346",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-risk",
+      "course_id": "risk",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "0d1b8b9cbc52ea7d82fe",
+      "file": "lesson-risk-zh-CN-0d1b8b9cbc52ea7d82fe.mp3",
+      "duration_ms": 66635,
+      "sha256": "39f3737d6e373aa8c9689cf08c1e0cd45a17fef33335f745e0c97fdfa001b309",
+      "sections": [
+        {
+          "title": "先写计划，再做复盘",
+          "start_ms": 0
+        },
+        {
+          "title": "费用也是交易的一部分",
+          "start_ms": 3459
+        },
+        {
+          "title": "仓位改变了什么",
+          "start_ms": 21996
+        },
+        {
+          "title": "交易前计划",
+          "start_ms": 37880
+        },
+        {
+          "title": "交易后复盘",
+          "start_ms": 49601
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-risk",
+      "course_id": "risk",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "f4e1915257d072e56aea",
+      "file": "coach-lesson-risk-zh-CN-f4e1915257d072e56aea.mp3",
+      "duration_ms": 13175,
+      "sha256": "ed7dba3f65d03caf1b43dc843feaacb305b27a8eb11029ca0355a6a6557a5ed1",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-strategy",
+      "course_id": "strategy",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "f65bd48f54c60c9ea432",
+      "file": "lesson-strategy-zh-CN-f65bd48f54c60c9ea432.mp3",
+      "duration_ms": 65735,
+      "sha256": "9305d47f1f99a99a794c7b5958ef08c065ebba63af960aee5508f438abd09ebf",
+      "sections": [
+        {
+          "title": "把想法变成可以复现的规则",
+          "start_ms": 0
+        },
+        {
+          "title": "明确一个简单条件",
+          "start_ms": 3863
+        },
+        {
+          "title": "决策和执行分开",
+          "start_ms": 21371
+        },
+        {
+          "title": "阅读报告",
+          "start_ms": 35411
+        },
+        {
+          "title": "结论有边界",
+          "start_ms": 50846
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-strategy",
+      "course_id": "strategy",
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "37465239997fa2562144",
+      "file": "coach-lesson-strategy-zh-CN-37465239997fa2562144.mp3",
+      "duration_ms": 15484,
+      "sha256": "470694fd41bf3c3a3d7df9d275693e04e7e0eb906e9e305410849af9253202ea",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-boundary",
+      "course_id": null,
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "2be05b4017d947d90d57",
+      "file": "coach-boundary-zh-CN-2be05b4017d947d90d57.mp3",
+      "duration_ms": 15064,
+      "sha256": "3deb4a83db738c2736b5ce4cfd1b66c3b3179867f80d37eac386f0e223ec2ae3",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-orders",
+      "course_id": null,
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "615c576077c9e21aef18",
+      "file": "coach-orders-zh-CN-615c576077c9e21aef18.mp3",
+      "duration_ms": 19178,
+      "sha256": "d19ed8fee54a5d6501f77d0f3b1201327655c6c0e1b1f0b571ac902803f4b3a5",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-costs",
+      "course_id": null,
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "6218a5fa60b7c956603a",
+      "file": "coach-costs-zh-CN-6218a5fa60b7c956603a.mp3",
+      "duration_ms": 18393,
+      "sha256": "8f5c5a4b0f8be5fe081a134f19e486023d9a2a7626e73b3761c3324a44ccc5b1",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-positions",
+      "course_id": null,
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "3124e5ad9073cbaf6772",
+      "file": "coach-positions-zh-CN-3124e5ad9073cbaf6772.mp3",
+      "duration_ms": 14444,
+      "sha256": "76a698ab660ba77efd0b12743693b56f1be133ee51fbffe6d081d4d59ba9e168",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-example",
+      "course_id": null,
+      "locale": "zh-CN",
+      "voice": "Microsoft Huihui Desktop",
+      "version": "5e224e5992ce5c162bd8",
+      "file": "coach-example-zh-CN-5e224e5992ce5c162bd8.mp3",
+      "duration_ms": 17304,
+      "sha256": "b71124ab46cc42984f1eff0db342ad33fe19fb79bfda90ab76ec3847c5279c13",
+      "sections": [
+        {
+          "title": "讲解",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-account",
+      "course_id": "account",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "f4660d78bd8337a2a102",
+      "file": "lesson-account-en-f4660d78bd8337a2a102.mp3",
+      "duration_ms": 87512,
+      "sha256": "815bc32613da06d137fcc5eec98f4a83a4bc6c71d63f96de8251b3d422d6b3d8",
+      "sections": [
+        {
+          "title": "Meet your simulated account",
+          "start_ms": 0
+        },
+        {
+          "title": "One account, several different numbers",
+          "start_ms": 7978
+        },
+        {
+          "title": "Orders are intentions",
+          "start_ms": 47176
+        },
+        {
+          "title": "Try it yourself",
+          "start_ms": 68276
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-account",
+      "course_id": "account",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "57337c42bc7ec4a8a006",
+      "file": "coach-lesson-account-en-57337c42bc7ec4a8a006.mp3",
+      "duration_ms": 15377,
+      "sha256": "4bb1579dc12405fb7c0141b8f48c7d479a168368765b6ba29f6f40b39b8d909f",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-orders",
+      "course_id": "orders",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "f0e18da904f954b7736f",
+      "file": "lesson-orders-en-f0e18da904f954b7736f.mp3",
+      "duration_ms": 102035,
+      "sha256": "f27f9d08f8e41302a21dbf888dc98293e2adb8bc35318735adbf38dfef88b2c9",
+      "sections": [
+        {
+          "title": "Your first simulated trade",
+          "start_ms": 0
+        },
+        {
+          "title": "From order to execution",
+          "start_ms": 6893
+        },
+        {
+          "title": "If an order does not execute",
+          "start_ms": 39753
+        },
+        {
+          "title": "Holdings and sellable shares",
+          "start_ms": 64163
+        },
+        {
+          "title": "Completion",
+          "start_ms": 79715
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-orders",
+      "course_id": "orders",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "23f5db67a4aaaefb1a9b",
+      "file": "coach-lesson-orders-en-23f5db67a4aaaefb1a9b.mp3",
+      "duration_ms": 19211,
+      "sha256": "035684b031c59e116f9afe527c58ee90842405f01aa8f9e53b4d5ff825801fdd",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-market",
+      "course_id": "market",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "b3c20857656db5d4f57f",
+      "file": "lesson-market-en-b3c20857656db5d4f57f.mp3",
+      "duration_ms": 83779,
+      "sha256": "c5e9869f3616944177cef0e05722d56bc8437e0beeb98cb1214e3220241010bf",
+      "sections": [
+        {
+          "title": "Read prices and market data",
+          "start_ms": 0
+        },
+        {
+          "title": "Four prices and one quantity",
+          "start_ms": 8408
+        },
+        {
+          "title": "Calculate a price change",
+          "start_ms": 30874
+        },
+        {
+          "title": "What volume can tell you",
+          "start_ms": 52040
+        },
+        {
+          "title": "Try it yourself",
+          "start_ms": 64687
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-market",
+      "course_id": "market",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "afc8fee837d0eb25e151",
+      "file": "coach-lesson-market-en-afc8fee837d0eb25e151.mp3",
+      "duration_ms": 16232,
+      "sha256": "85eb28af01be1f7028f120e39841ed74467efe58d124a4f53a6b664018b55d4e",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-risk",
+      "course_id": "risk",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "3e64bc2c8a205edd1de6",
+      "file": "lesson-risk-en-3e64bc2c8a205edd1de6.mp3",
+      "duration_ms": 91156,
+      "sha256": "9d87b226ccb9e8a9bd082375fe31c7c4917390e56766a19cbd777c8d8b99252c",
+      "sections": [
+        {
+          "title": "Understand risk and trading costs",
+          "start_ms": 0
+        },
+        {
+          "title": "Price differences are not net results",
+          "start_ms": 8768
+        },
+        {
+          "title": "Allocation changes the impact",
+          "start_ms": 33733
+        },
+        {
+          "title": "Plan before the result",
+          "start_ms": 63093
+        },
+        {
+          "title": "Completion",
+          "start_ms": 77044
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-risk",
+      "course_id": "risk",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "1105ed0415915e0fbc05",
+      "file": "coach-lesson-risk-en-1105ed0415915e0fbc05.mp3",
+      "duration_ms": 12682,
+      "sha256": "edf2777dcadb9d85b44fe526ea757be3d879c5579ebfe5d9921052b8d7877b55",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "lesson-strategy",
+      "course_id": "strategy",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "8457e50e47a5f2eb3fd3",
+      "file": "lesson-strategy-en-8457e50e47a5f2eb3fd3.mp3",
+      "duration_ms": 94271,
+      "sha256": "b395ec366175fc492b65003a9263f4d3fbca757a4fc66f6560f50ee5688ac677",
+      "sections": [
+        {
+          "title": "Build your first rule-based strategy",
+          "start_ms": 0
+        },
+        {
+          "title": "A precise rule",
+          "start_ms": 8693
+        },
+        {
+          "title": "Run the experiment",
+          "start_ms": 32918
+        },
+        {
+          "title": "Compare with care",
+          "start_ms": 57264
+        },
+        {
+          "title": "Completion",
+          "start_ms": 82034
+        }
+      ]
+    },
+    {
+      "id": "coach-lesson-strategy",
+      "course_id": "strategy",
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "86297eca4b8e9e6d9f8f",
+      "file": "coach-lesson-strategy-en-86297eca4b8e9e6d9f8f.mp3",
+      "duration_ms": 13857,
+      "sha256": "9eda9a4426f688383fc508c63c1d67f84bc9ed53771363962afa391d35d592f2",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-boundary",
+      "course_id": null,
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "131593d3ada35bdf1b28",
+      "file": "coach-boundary-en-131593d3ada35bdf1b28.mp3",
+      "duration_ms": 11318,
+      "sha256": "a3390c3f23d58177f9a828a2058cb6394de3926a89615cf34de5fcd675d50d09",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-orders",
+      "course_id": null,
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "b0263e290b2746fdbbb9",
+      "file": "coach-orders-en-b0263e290b2746fdbbb9.mp3",
+      "duration_ms": 14812,
+      "sha256": "e21d3a097a247a582ce6f809d68aa6c23d01242b438f9f2fe7f1d08639215c11",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-costs",
+      "course_id": null,
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "f01d6ad8211e7bf96110",
+      "file": "coach-costs-en-f01d6ad8211e7bf96110.mp3",
+      "duration_ms": 16492,
+      "sha256": "6e6b82c021dbf096dcd397c10eaf3bedaf86fd56dd5c8e2ce8771593e5e41822",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-positions",
+      "course_id": null,
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "9bdf49e52d7be0c69b7a",
+      "file": "coach-positions-en-9bdf49e52d7be0c69b7a.mp3",
+      "duration_ms": 12547,
+      "sha256": "cc8a6d30d72a439d748a6fed10c8e967d2fcce1a6cd3aafa09c7a44f97810a08",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    },
+    {
+      "id": "coach-example",
+      "course_id": null,
+      "locale": "en",
+      "voice": "Microsoft Zira Desktop",
+      "version": "4efd2e0f60ced35b00d9",
+      "file": "coach-example-en-4efd2e0f60ced35b00d9.mp3",
+      "duration_ms": 14002,
+      "sha256": "4efdd8d6ce9c32a01dc47f360828c9444bb2b72bfa1c9ba9517f19a301c62841",
+      "sections": [
+        {
+          "title": "Explanation",
+          "start_ms": 0
+        }
+      ]
+    }
+  ]
+}

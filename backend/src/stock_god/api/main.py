@@ -9,8 +9,10 @@ from typing import Literal
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Header, HTTPException, Request, Query
+from stock_god.i18n import LocalizedJSONResponse as JSONResponse, LOCALE, PATH, negotiate, translate
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import select
@@ -23,6 +25,11 @@ from stock_god.adapters.data import PROVIDER, RULES
 from stock_god.api.auth import auth_router, resolve_session, digest, public_player
 from stock_god.db.models import ReviewItem, ReviewAttempt
 from stock_god.learning import reviews
+from stock_god.research.comparison import compare
+from stock_god.learning import narration
+from stock_god.learning.coach import ANSWERS as COACH_ANSWERS, topic as coach_topic
+from stock_god.db.models import ListeningProgress
+from fastapi.responses import FileResponse
 
 
 class StrictBody(BaseModel):
@@ -45,6 +52,10 @@ class ProfileBody(StrictBody):
 class GuideBody(StrictBody):
     step: int = Field(ge=0, le=3)
     status: Literal['pending', 'completed', 'skipped'] = 'pending'
+
+
+class LanguageBody(StrictBody):
+    locale: Literal['zh-CN', 'en']
 
 
 class OrderBody(StrictBody):
@@ -106,7 +117,7 @@ def create_app(url=None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="我是股神 · 教学模拟 API", version="0.3.0", lifespan=lifespan)
+    app = FastAPI(title="Stock God · Teaching Simulation API", version="0.5.0", lifespan=lifespan, default_response_class=JSONResponse)
     app.state.factory = factory
     origins = {x.strip().rstrip('/') for x in os.getenv('APP_ORIGINS', 'http://127.0.0.1:8080,http://localhost:8080,http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5174,http://localhost:5174,http://testserver').split(',')}
     hosts = {'api', 'testserver', '127.0.0.1', 'localhost'} | {urlparse(x).hostname for x in origins}
@@ -135,11 +146,45 @@ def create_app(url=None):
         response.headers['X-Content-Type-Options'] = 'nosniff'
         return response
 
+    @app.middleware('http')
+    async def language_context(request: Request, call_next):
+        locale_token = LOCALE.set(negotiate(request.headers.get('accept-language')))
+        path_token = PATH.set(request.url.path)
+        try:
+            response = await call_next(request)
+            response.headers.setdefault('Content-Language', LOCALE.get())
+            response.headers['Vary'] = 'Accept-Language'
+            return response
+        finally:
+            LOCALE.reset(locale_token)
+            PATH.reset(path_token)
+
+    @app.exception_handler(StarletteHTTPException)
+    async def http_error(request, exc):
+        return JSONResponse(status_code=exc.status_code, content={'detail': exc.detail}, headers=exc.headers)
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, exc):
+        # Do not echo submitted passwords or other input back in errors.
+        errors = []
+        for error in exc.errors():
+            message = error['msg']
+            if LOCALE.get() == 'zh-CN' and not any('\u4e00' <= c <= '\u9fff' for c in message):
+                message = '输入格式不符合要求，请检查填写内容。'
+            errors.append({'loc': error['loc'], 'type': error['type'], 'msg': message})
+        return JSONResponse(status_code=422, content={'detail': errors})
+
     @app.exception_handler(Exception)
     async def unexpected(request, exc):
         import logging
         logging.getLogger("stock_god").exception("Unhandled API error: %s", request.url.path, exc_info=exc)
-        return JSONResponse(status_code=500, content={"detail": "服务暂时无法完成请求，变更已回滚。请稍后重试并查看服务日志。"})
+        # ServerErrorMiddleware renders after request contexts have unwound.
+        token = LOCALE.set(negotiate(request.headers.get('accept-language')))
+        try:
+            return JSONResponse(status_code=500, content={"detail": "服务暂时无法完成请求，变更已回滚。请稍后重试并查看服务日志。"},
+                                headers={'Content-Language': LOCALE.get(), 'Vary': 'Accept-Language', 'Cache-Control': 'no-store'})
+        finally:
+            LOCALE.reset(token)
 
     def mutate(player_id, path, key, body, operation):
         digest = hashlib.sha256(json.dumps(body, sort_keys=True, ensure_ascii=False, default=str).encode()).hexdigest()
@@ -189,10 +234,25 @@ def create_app(url=None):
             return public_player(player)
         return mutate(request.state.player_id, 'onboarding', idempotency_key, body.model_dump(), update)
 
+    @app.post('/api/preferences/language')
+    def language_preference(request: Request, body: LanguageBody, idempotency_key: str = Header(min_length=8, max_length=128)):
+        def update(s):
+            player = s.get(Player, request.state.player_id)
+            player.locale = body.locale
+            return {'locale': player.locale}
+        return mutate(request.state.player_id, 'language', idempotency_key, body.model_dump(), update)
+
     @app.get("/api/courses/{lesson_id}")
     def get_course(request: Request, lesson_id: str):
         with owned_session(factory, request.state.player_id) as s:
-            return course_detail(s, lesson_id)
+            result = course_detail(s, lesson_id)
+            try:
+                result["narration"] = narration.detail(s, "lesson-" + lesson_id, saved=True)
+            except HTTPException as error:
+                if error.status_code not in (404, 503):
+                    raise
+                result["narration"] = None
+            return result
 
     @app.post("/api/courses/{lesson_id}/answers")
     def answers(request: Request, lesson_id: str, body: AnswersBody, idempotency_key: str = Header(min_length=8, max_length=128)):
@@ -247,6 +307,11 @@ def create_app(url=None):
         with owned_session(factory, request.state.player_id) as s:
             return [job_view(j) for j in s.scalars(select(Job).where(Job.player_id == request.state.player_id).order_by(Job.created_at.desc()).limit(30))]
 
+    @app.get('/api/experiments/comparison')
+    def experiment_comparison(request: Request, ids: list[str] = Query(min_length=2, max_length=3)):
+        with owned_session(factory, request.state.player_id) as s:
+            return compare(s, ids)
+
     @app.post("/api/experiments")
     def experiment(request: Request, body: ExperimentBody, idempotency_key: str = Header(min_length=8, max_length=128)):
         if body.short_window >= body.long_window:
@@ -276,20 +341,42 @@ def create_app(url=None):
     def coach(request: Request, body: CoachBody):
         with owned_session(factory, request.state.player_id) as s:
             detail = course_detail(s, body.lesson_id)
-        question = body.question
-        if any(word in question for word in ("推荐", "明天", "预测", "涨停", "买哪")):
-            answer = "这里的教练只帮助你理解课程和模拟规则。教学数据不能用来预测真实股票。可以问我如何查看资金、理解费用或解释订单状态。"
-        elif any(word in question for word in ("不成交", "没成交", "委托", "下单", "订单")):
-            answer = "提交订单后先冻结资金或持仓，订单显示“待处理”。推进下一教学日才按开盘参考价检查限价；不满足价格条件或停牌时不会成交。请打开订单结果查看具体原因。"
-        elif any(word in question for word in ("费用", "成本", "佣金")):
-            answer = "教学费用由佣金、过户费和卖出时的印花税构成。佣金按成交金额的 0.03% 估算、每笔至少 5 元，这是教学假设。每笔成交都会列出实际扣除的费用。"
-        elif any(word in question for word in ("卖", "持仓", "T+1")):
-            answer = "总持仓包含今天刚买入的股票；可卖数量还要扣除当日买入和待处理卖单冻结的数量。本场景当日买入，下一教学日才可卖出。"
-        elif "例" in question:
-            answer = "换个例子：账户现金 30,000 元，待处理买单冻结 5,000 元，可用资金就是 25,000 元。撤销这张待处理买单后，5,000 元会释放，现金总额没有因此增加。"
-        else:
-            answer = detail["goal"] + " " + detail["practice"]
-        return {"answer": answer, "source": detail["title"], "kind": "预设教学讲解"}
+        selected = coach_topic(body.question)
+        answer = COACH_ANSWERS[selected] if selected else translate(detail["goal"]) + " " + translate(detail["practice"])
+        with owned_session(factory, request.state.player_id) as s:
+            try:
+                audio = narration.detail(s, 'coach-' + selected if selected else 'coach-lesson-' + body.lesson_id)
+            except HTTPException as error:
+                if error.status_code not in (404, 503):
+                    raise
+                audio = None
+        return {"answer": answer, "source": detail["title"], "kind": "预设教学讲解", "narration": audio}
+
+    @app.get('/api/narration/{track_id}/{locale}/{version}.mp3')
+    def narration_audio(request: Request, track_id: str, locale: str, version: str):
+        track = narration.track_for(track_id, locale, version)
+        if track['course_id']:
+            with owned_session(factory, request.state.player_id) as s:
+                course_detail(s, track['course_id'])
+        path = narration.ROOT / track['file']
+        if not path.is_file():
+            raise HTTPException(503, '课程音频尚未准备好，文字讲解仍可使用。')
+        return FileResponse(path, media_type='audio/mpeg', headers={'Content-Language': track['locale']})
+
+    @app.post('/api/courses/{lesson_id}/listening')
+    def save_listening(request: Request, lesson_id: str, body: narration.BookmarkBody, idempotency_key: str = Header(min_length=8, max_length=128)):
+        return mutate(request.state.player_id, 'listening:' + lesson_id, idempotency_key, body.model_dump(), lambda s: narration.save(s, lesson_id, body))
+
+    @app.get('/api/courses/{lesson_id}/narration')
+    def course_narration(request: Request, lesson_id: str, locale: Literal['zh-CN', 'en']):
+        with owned_session(factory, request.state.player_id) as s:
+            course_detail(s, lesson_id)
+            return narration.detail(s, 'lesson-' + lesson_id, locale, saved=True)
+
+    @app.get('/api/listening')
+    def listening_history(request: Request):
+        with owned_session(factory, request.state.player_id) as s:
+            return narration.history(s)
 
     @app.get("/api/export")
     def export(request: Request):
@@ -297,10 +384,10 @@ def create_app(url=None):
         with owned_session(factory, request.state.player_id) as s:
             rows = {}
             account_ids = select(Account.id).where(Account.player_id == request.state.player_id)
-            for model in (Player, Account, Progress, Reward, Attempt, Reflection, ReviewItem, ReviewAttempt, Job, Order, Position, Ledger):
+            for model in (Player, Account, Progress, Reward, Attempt, Reflection, ReviewItem, ReviewAttempt, ListeningProgress, Job, Order, Position, Ledger):
                 table = model.__table__
                 if model is Player:
-                    statement = select(table.c.id, table.c.username, table.c.name, table.c.xp, table.c.onboarded, table.c.reduced_motion, table.c.guide_step, table.c.guide_status).where(table.c.id == request.state.player_id)
+                    statement = select(table.c.id, table.c.username, table.c.name, table.c.xp, table.c.onboarded, table.c.reduced_motion, table.c.guide_step, table.c.guide_status, table.c.locale).where(table.c.id == request.state.player_id)
                 elif model in (Order, Position, Ledger):
                     statement = select(table).where(table.c.account_id.in_(account_ids))
                 else:

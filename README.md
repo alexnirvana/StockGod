@@ -10,7 +10,7 @@ A self-hosted learning app for stock-market fundamentals and introductory quanti
 Lessons, simulated trades, and spaced reviews — all in your browser.
 
 <p>
-  <img alt="Version 0.3.0" src="https://img.shields.io/badge/version-0.3.0-6366f1?style=flat-square">
+  <img alt="Version 0.5.0" src="https://img.shields.io/badge/version-0.5.0-6366f1?style=flat-square">
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61dafb?style=flat-square">
   <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square">
   <img alt="MySQL 8.4" src="https://img.shields.io/badge/MySQL-8.4-4479a1?style=flat-square">
@@ -29,9 +29,16 @@ Lessons, simulated trades, and spaced reviews — all in your browser.
 
 ## Preview
 
-![Stock God learning dashboard](.github/assets/dashboard.png)
+![Stock God learning dashboard](.github/assets/dashboard-en.png)
 
-<sub>Actual application screenshot using an isolated demo account. The current application and course content are in Simplified Chinese; this README is available in English and Chinese.</sub>
+<sub>Actual application screenshot using an isolated demo account. The interface, five courses, quizzes, reviews, and system feedback are available in English and Simplified Chinese. Reference artwork retains its original lettering.</sub>
+
+<details>
+<summary><strong>Spoken lesson preview</strong></summary>
+
+![English narration controls](.github/assets/narration-en.png)
+
+</details>
 
 ## Why Stock God?
 
@@ -46,21 +53,22 @@ You can follow a five-chapter path, inspect what happened to an order, and retur
 | | What you can do |
 | :--- | :--- |
 | **Personal learning space** | Register, sign in, and keep your own progress, orders, experiments, and reflections in MySQL. |
+| **Two languages** | Switch between English and Simplified Chinese from the sign-in page or toolbar. Signed-in preferences follow your account. |
 | **Guided first visit** | Follow a four-step introduction. Skip it, resume it later, or reopen it from the account menu. |
 | **Five learning chapters** | Explore accounts, orders, market data, risk and costs, and rule-based strategies. Complete independent quizzes to unlock chapters and earn one-time badges. |
+| **Spoken explanations** | Listen to all five lessons and preset coach answers in English or Simplified Chinese. Pause, change speed, jump between sections, and resume from a saved position. Thirty MP3 tracks are bundled; no speech API key is required. |
 | **Knowledge reviews** | Practice 10 knowledge points through 20 alternative cases. Mistakes enter your personal queue; successful reviews schedule follow-ups after 1, 3, and 7 days. |
 | **Simulated trading** | Use separate tutorial and free-practice accounts, each starting with 100,000 virtual CNY. Place limit orders, cancel pending orders, inspect fees, positions, and the cash ledger. |
-| **Strategy experiments** | Run a moving-average strategy on a fixed 60-day teaching dataset. Inspect equity, a benchmark, drawdown, fees, and versioned parameters. |
+| **Strategy experiments** | Run a moving-average strategy on a fixed 60-day teaching dataset. Inspect equity, a benchmark, drawdown, fees, and versioned parameters. Compare two or three completed runs over a common period. |
 | **A compact workspace** | Keep charts and tasks visible on desktop. Open lessons, quizzes, trade records, and reviews in dialogs. Smaller screens scroll within the content area. |
 | **Records you can inspect** | Save plans and reflections, export your own business records, and check database, worker, and data availability. |
 
-### New in 0.3
+### New in 0.5
 
-- Reviews now track individual knowledge points and use cases different from the original quiz.
-- Review timing uses elapsed time, independently of the simulated trading clock. After four successful scheduled reviews, a knowledge point completes its current review cycle.
-- A wrong answer restarts that cycle. Reviews never duplicate course XP or badge rewards.
-- Queue state and review attempts persist across sign-ins; concurrent and repeated submissions are protected.
-- Existing unresolved mistakes are migrated without resetting course progress.
+- Course explanations and preset coach answers now include built-in synthesized audio in both languages.
+- Playback includes pause/resume, restart, a seek bar, section navigation, and speeds from 0.75× to 2×. Audio starts only when you press play.
+- Listening positions and speed are saved separately for each account, course, and language. Open **Learning Profile → My listening history** to continue.
+- Closing an explanation stops its audio. Listening does not grant XP or bypass independent practice.
 
 ## Quick start
 
@@ -88,8 +96,9 @@ Open **[http://127.0.0.1:8080](http://127.0.0.1:8080)** and create an account.
 
 1. Choose a username with 3–32 letters, digits, or underscores, and a password with 10–128 characters.
 2. Follow the first-visit guide and begin the account chapter.
-3. Complete the independent quiz. Open the review card or reminder bell to revisit mistakes.
-4. Continue to trading practice and inspect the outcome of each simulated order.
+3. Open **Lesson** and press **Play narration** to listen, or read at your own pace.
+4. Complete the independent quiz. Open the review card or reminder bell to revisit mistakes.
+5. Continue to trading practice and inspect the outcome of each simulated order.
 
 There is no shared default account. Usernames are case-insensitive. Once the local services are running, the included lessons and teaching simulations do not require an external data or AI service.
 
@@ -127,7 +136,7 @@ flowchart LR
 
 | Layer | Stack |
 | :--- | :--- |
-| Interface | React 19, TypeScript, Vite, React Router, TanStack Query |
+| Interface | React 19, TypeScript, Vite, React Router, TanStack Query, i18next |
 | UI and charts | Radix UI, Tailwind CSS, Motion, ECharts |
 | API and persistence | FastAPI, SQLAlchemy, Alembic, MySQL 8.4 |
 | Experiments | Python worker, APScheduler, Parquet, DuckDB |
@@ -179,7 +188,13 @@ npm --prefix frontend test
 npm --prefix frontend run build
 ```
 
-The test suite covers authentication, user isolation, order accounting, idempotency, recovery, review scheduling, and legacy migrations. MySQL tests require a dedicated `stockgod_tests` database. Browser scripts are in [tests/e2e](tests/e2e); setup and isolated test commands are in the [operations guide](guides/OPERATIONS.md).
+The test suite covers authentication, user isolation, order accounting, idempotency, recovery, review scheduling, language isolation, experiment comparison, audio access, listening bookmarks, and legacy migrations. MySQL tests require a dedicated `stockgod_tests` database. Browser scripts are in [tests/e2e](tests/e2e); setup and isolated test commands are in the [operations guide](guides/OPERATIONS.md).
+
+### Translation contributions
+
+For bundled speech assets, playback behavior, and rebuilding audio, see [narration](guides/NARRATION.md).
+
+See the [internationalization guide](guides/I18N.md) for locale selection, resource files, canonical records, and translation checks.
 
 ### Repository layout
 
@@ -206,9 +221,11 @@ StockGod/
 - [x] Reproducible experiments on fixed teaching data
 - [ ] Validated historical market data and historical challenges
 - [ ] Daily forward simulation with data availability checks
-- [ ] More lessons, review cases, and experiment comparisons
+- [x] Experiment comparisons over aligned common periods
+- [ ] More lessons and review cases
 - [ ] Optional AI explanations and introductory model-research courses
-- [ ] English application interface and course translations
+- [x] English and Simplified Chinese interface and course content
+- [x] Built-in bilingual narration and personal listening bookmarks
 
 Real market feeds, historical challenges, forward simulation, open-ended AI coaching, LightGBM training, email verification, and self-service password recovery are **not implemented**. The included coach provides preset teaching explanations.
 
